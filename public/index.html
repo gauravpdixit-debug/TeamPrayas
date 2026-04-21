@@ -417,7 +417,7 @@
 </div>
 
 <script>
-const API='https://teamprayas.onrender.com';
+const API='';
 
 let CAT_COLORS={
   Guidelines:{bg:'#E8F5EB',color:'#1A5C2A'},
@@ -524,7 +524,7 @@ async function uploadFile(){
 
 async function loadFiles(){
   document.getElementById('file-list').innerHTML='<div class="loading-row"><span class="spinner"></span> Loading files...</div>';
-  files=await api('GET','/files');renderFiles();
+  files=await api('GET','/api/files');renderFiles();
   if(currentRole==='admin') renderAdminFiles();
 }
 
@@ -564,7 +564,7 @@ function renderFiles(){
   nf.classList.add('hidden');
   list.innerHTML=filtered.map(f=>{
     const cc=CAT_COLORS[f.category]||{bg:'#F0F0EE',color:'#5A5A58'};
-    const isLocal=f.source==='local';const openUrl=isLocal?`https://teamprayas.onrender.com${f.url}`:f.url;
+    const isLocal=f.source==='local';const openUrl=isLocal?`${f.url}`:f.url;
     return `<div class="file-card">
       <div class="file-icon" style="background:${cc.bg};color:${cc.color}">${f.type}</div>
       <div style="flex:1;min-width:0">
@@ -585,7 +585,7 @@ function renderAdminFiles(){
   document.getElementById('admin-file-count').textContent=files.length+' file'+(files.length!==1?'s':'');
   document.getElementById('admin-file-list').innerHTML=files.length?files.map(f=>{
     const cc=CAT_COLORS[f.category]||{bg:'#F0F0EE',color:'#5A5A58'};
-    const isLocal=f.source==='local';const openUrl=isLocal?`https://teamprayas.onrender.com${f.url}`:f.url;
+    const isLocal=f.source==='local';const openUrl=isLocal?`${f.url}`:f.url;
     return `<div class="admin-row">
       <div style="width:38px;height:38px;border-radius:10px;background:${cc.bg};color:${cc.color};font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${f.type}</div>
       <div style="flex:1;min-width:0">
@@ -614,7 +614,7 @@ async function addFile(){
   const err=document.getElementById('add-file-err');
   if(!name){err.style.display='block';return;}err.style.display='none';
   try{
-    const newFile=await api('POST','/files',{name,category:document.getElementById('add-cat').value,type:document.getElementById('add-type').value,size:document.getElementById('add-size').value||'—',description:document.getElementById('add-desc').value,url:document.getElementById('add-url').value||'#',date:new Date().toISOString().slice(0,10)});
+    const newFile=await api('POST','/api/files',{name,category:document.getElementById('add-cat').value,type:document.getElementById('add-type').value,size:document.getElementById('add-size').value||'—',description:document.getElementById('add-desc').value,url:document.getElementById('add-url').value||'#',date:new Date().toISOString().slice(0,10)});
     files.unshift(newFile);['add-name','add-size','add-desc','add-url'].forEach(id=>document.getElementById(id).value='');
     renderFiles();renderAdminFiles();showToast('✅ File added: '+newFile.name);
   }catch(e){showToast('❌ '+e.message);}
@@ -622,7 +622,7 @@ async function addFile(){
 
 async function deleteFile(id){
   if(!confirm('Remove this file?')) return;
-  try{await api('DELETE','/files/'+id);files=files.filter(f=>f.id!==id);renderFiles();renderAdminFiles();showToast('🗑️ File removed');}
+  try{await api('DELETE','/api/files/'+id);files=files.filter(f=>f.id!==id);renderFiles();renderAdminFiles();showToast('🗑️ File removed');}
   catch(e){showToast('❌ '+e.message);}
 }
 
@@ -637,7 +637,7 @@ function openFileEdit(id){
 async function saveFileEdit(){
   const id=parseInt(document.getElementById('ef-id').value);
   try{
-    const updated=await api('PUT','/files/'+id,{name:document.getElementById('ef-name').value,category:document.getElementById('ef-cat').value,type:document.getElementById('ef-type').value,description:document.getElementById('ef-desc').value,url:document.getElementById('ef-url').value});
+    const updated=await api('PUT','/api/files/'+id,{name:document.getElementById('ef-name').value,category:document.getElementById('ef-cat').value,type:document.getElementById('ef-type').value,description:document.getElementById('ef-desc').value,url:document.getElementById('ef-url').value});
     const idx=files.findIndex(x=>x.id===id);if(idx!==-1)files[idx]=updated;
     closeModal('modal-edit-file');renderFiles();renderAdminFiles();showToast('✅ File updated');
   }catch(e){showToast('❌ '+e.message);}
@@ -710,7 +710,7 @@ function deleteCategory(name){
 }
 
 // ── Users ─────────────────────────────────────────────────────────────────────
-async function loadUsers(){users=await api('GET','/users');renderUsers();}
+async function loadUsers(){users=await api('GET','/api/users');renderUsers();}
 
 function renderUsers(){
   document.getElementById('user-list').innerHTML=users.map(u=>{
@@ -742,7 +742,7 @@ async function addUser(){
   ['au-err','au-exists'].forEach(id=>document.getElementById(id).style.display='none');
   if(!uname||!pass){document.getElementById('au-err').style.display='block';return;}
   try{
-    const newUser=await api('POST','/users',{username:uname,password:pass,role:document.getElementById('au-role').value});
+    const newUser=await api('POST','/api/users',{username:uname,password:pass,role:document.getElementById('au-role').value});
     users.push(newUser);closeModal('modal-add-user');renderUsers();showToast('✅ Member added: '+uname);
   }catch(e){if(e.message.includes('already'))document.getElementById('au-exists').style.display='block';else showToast('❌ '+e.message);}
 }
@@ -761,7 +761,7 @@ async function saveUserEdit(){
   ['eu-err','eu-exists'].forEach(id=>document.getElementById(id).style.display='none');
   if(!newName){document.getElementById('eu-err').style.display='block';return;}
   try{
-    const updated=await api('PUT','/users/'+orig,{username:newName,password:newPass,role:newRole});
+    const updated=await api('PUT','/api/users/'+orig,{username:newName,password:newPass,role:newRole});
     const idx=users.findIndex(x=>x.username===orig);if(idx!==-1)users[idx]=updated;
     if(orig===currentUser){currentUser=newName;currentRole=newRole;document.getElementById('nav-user').textContent=newName;const b=document.getElementById('nav-badge');b.textContent=newRole==='admin'?'Admin':'Team Member';b.className='badge '+(newRole==='admin'?'role-admin':'role-member');}
     closeModal('modal-edit-user');renderUsers();showToast('✅ Member updated');
@@ -770,7 +770,7 @@ async function saveUserEdit(){
 
 async function deleteUser(username){
   if(!confirm(`Remove "${username}" from the portal?`)) return;
-  try{await api('DELETE','/users/'+username);users=users.filter(u=>u.username!==username);renderUsers();showToast('🗑️ Member removed');}
+  try{await api('DELETE','/api/users/'+username);users=users.filter(u=>u.username!==username);renderUsers();showToast('🗑️ Member removed');}
   catch(e){showToast('❌ '+e.message);}
 }
 
