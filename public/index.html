@@ -448,7 +448,7 @@ async function doLogin(){
   const btn=document.getElementById('login-btn');
   btn.innerHTML='<span class="spinner"></span>Signing in...';btn.disabled=true;
   try{
-    const result=await api('POST','/login',{username:u,password:p});
+    const result=await api('POST','/api/login',{username:u,password:p});
     currentUser=result.username;currentRole=result.role;
     document.getElementById('login-error').style.display='none';
     document.getElementById('login-screen').style.display='none';
