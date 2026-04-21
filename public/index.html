@@ -509,7 +509,7 @@ async function uploadFile(){
   pw.style.display='block';pb.style.width='0%';
   try{
     const newFile=await new Promise((resolve,reject)=>{
-      const xhr=new XMLHttpRequest();xhr.open('POST',API+'/files/upload');
+      const xhr=new XMLHttpRequest();xhr.open('POST','/api/files/upload');
       xhr.upload.onprogress=(e)=>{if(e.lengthComputable)pb.style.width=(e.loaded/e.total*100)+'%';};
       xhr.onload=()=>{if(xhr.status===201)resolve(JSON.parse(xhr.responseText));else reject(new Error(JSON.parse(xhr.responseText).error||'Upload failed'));};
       xhr.onerror=()=>reject(new Error('Upload failed'));xhr.send(formData);
@@ -564,7 +564,7 @@ function renderFiles(){
   nf.classList.add('hidden');
   list.innerHTML=filtered.map(f=>{
     const cc=CAT_COLORS[f.category]||{bg:'#F0F0EE',color:'#5A5A58'};
-    const isLocal=f.source==='local';const openUrl=isLocal?`${f.url}`:f.url;
+    const isLocal=f.source==='local';const openUrl=isLocal?`https://teamprayas.onrender.com${f.url}`:f.url;
     return `<div class="file-card">
       <div class="file-icon" style="background:${cc.bg};color:${cc.color}">${f.type}</div>
       <div style="flex:1;min-width:0">
@@ -585,7 +585,7 @@ function renderAdminFiles(){
   document.getElementById('admin-file-count').textContent=files.length+' file'+(files.length!==1?'s':'');
   document.getElementById('admin-file-list').innerHTML=files.length?files.map(f=>{
     const cc=CAT_COLORS[f.category]||{bg:'#F0F0EE',color:'#5A5A58'};
-    const isLocal=f.source==='local';const openUrl=isLocal?`${f.url}`:f.url;
+    const isLocal=f.source==='local';const openUrl=isLocal?`https://teamprayas.onrender.com${f.url}`:f.url;
     return `<div class="admin-row">
       <div style="width:38px;height:38px;border-radius:10px;background:${cc.bg};color:${cc.color};font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${f.type}</div>
       <div style="flex:1;min-width:0">
