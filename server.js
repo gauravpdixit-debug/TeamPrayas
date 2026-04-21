@@ -12,7 +12,7 @@ const initSqlJs = require('sql.js');
 const multer    = require('multer');
 
 const app     = express();
-const PORT    = 3000;
+const PORT    = process.env.PORT || 3000;
 const DB_PATH = path.join(__dirname, 'database.db');
 const UPLOADS = path.join(__dirname, 'uploads');
 
@@ -258,6 +258,9 @@ app.delete('/api/users/:username', (req, res) => {
 
 // ── Fallback ──────────────────────────────────────────────────────────────────
 app.get('*', (req, res) => {
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'API route not found' });
+  }
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
