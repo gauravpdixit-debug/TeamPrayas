@@ -776,7 +776,7 @@ async function deleteUser(username){
 
 // ── Modals ────────────────────────────────────────────────────────────────────
 const ALL_MODALS=['modal-edit-file','modal-add-user','modal-edit-user','modal-categories','modal-edit-cat'];
-function openModal(id){const https://teamprayas.onrender.comel=document.getElementById(id);el.classList.remove('hidden');el.style.display='flex';if(id==='modal-categories')renderCategoryModal();}
+function openModal(id){const el=document.getElementById(id);el.classList.remove('hidden');el.style.display='flex';if(id==='modal-categories')renderCategoryModal();}
 function closeModal(id){const el=document.getElementById(id);el.classList.add('hidden');el.style.display='none';}
 ALL_MODALS.forEach(id=>document.getElementById(id).addEventListener('click',function(e){if(e.target===this)closeModal(id);}));
 document.addEventListener('keydown',e=>{
